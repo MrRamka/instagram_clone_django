@@ -1,0 +1,23 @@
+<form class="my-2">
+    <div class="row">
+        <div class="col">
+
+            {% if post.image_obj %}
+                <input id="add_comment_input_Image_{{ post.id }}" name="add_comment_input" type="text"
+                       class="form-control feed_comment_block"
+                       placeholder="Add a comment">
+            {% else %}
+                <input id="add_comment_input_Video_{{ post.id }}" name="add_comment_input" type="text"
+                       class="form-control feed_comment_block"
+                       placeholder="Add a comment">
+            {% endif %}
+        </div>
+        <div class="col-2">
+            {% if post.image_obj %}
+                <button class="btn post_comment" data-pk="{{ post.id }}" data-type="Image">Post</button>
+            {% else %}
+                <button class="btn post_comment" data-pk="{{ post.id }}" data-type="Video">Post</button>
+            {% endif %}
+        </div>
+    </div>
+</form>

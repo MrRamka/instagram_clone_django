@@ -38,18 +38,13 @@ class ProfileAdmin(admin.ModelAdmin):
     list_filter = ['date_joined']
 
     def following_amount(self, profile):
-        return Profile.objects.filter(follows=profile).count()
+        return profile.followers_amount
 
-    # following_amount.admin_order_field = 'following_amount'
-    # def get_queryset(self, request):
-    #     qs = Profile.objects.annotate(following_amount=Count('follows'))
-    #     print(qs)
-    #
-    #     print()
-    #     q = (Profile.objects.annotate(followers_amount=Count('follows__username')))
-    #     for i in q:
-    #         print(i.followers_amount, sep=' ')
-    #     return qs
+    following_amount.admin_order_field = 'followers_amount'
+
+    def get_queryset(self, request):
+        qs = (Profile.objects.annotate(followers_amount=Count('followed_by')))
+        return qs
 
     def images_amount(self, profile):
         return Image.objects.filter(user=profile).count()

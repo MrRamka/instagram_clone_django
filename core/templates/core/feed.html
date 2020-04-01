@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+    {% for post in posts %}
+        <div class="feed_image_wrapper border p-2 shadow rounded my-5">
+            {# Post author #}
+            <p class="mx-2">
+                <a class="text-dark" href="{{ post.user.get_absolute_url }}">
+                    {{ post.user }}</a>
+            </p>
+
+            {# Image, Video #}
+            {% include 'core/includes/feed_post_object.html' %}
+
+
+            {# Likes #}
+            {% include 'core/includes/feed_likes.html' %}
+
+
+            {# Comment image #}
+            <a href="">
+                <img class="img_post_comment mx-2" src="{% static 'core/img/feed/comment.png' %}" alt="">
+            </a>
+
+            {# Amount likes #}
+            <p class="mx-2 likes my-1">Likes: <span
+                    id="likes_count_{{ post.id }}">{{ post.likes.all.count }}</span></p>
+
+            {# Views for video #}
+            {% if post.video_obj %}
+                <p class="mx-2 my-1">Views: <span
+                        id="views_count_{{ post.id }}">{{ post.views }}</span></p>
+            {% endif %}
+
+            {# Posted on #}
+            <p class="font-weight-light mx-2 text-uppercase feed_time_text">{{ post.posted_on|timesince }}
+                ago</p>
+
+            {#  Description  #}
+            {% if post.description %}
+                <p class="mx-4 text-dark">
+                    <span class="font-weight-bold">{{ post.user }}:</span>
+                    {{ post.description }} </p>
+            {% endif %}
+
+            {#  Comments  #}
+            {% include 'core/includes/feed_post_comments.html' %}
+
+
+            {% if post.image_obj %}
+                <div class="new_user_comments" data-pk="{{ post.id }}" data-type="Image">
+                </div>
+            {% else %}
+                <div class="new_user_comments" data-pk="{{ post.id }}" data-type="Video">
+                </div>
+            {% endif %}
+
+            {#  Add comment form  #}
+            {% include 'core/includes/feed_comment_form.html' %}
+        </div>
+
+
+
+
+    {% endfor %}
+    {#    <script src="{% static 'core/js/like-ajax.js' %}"></script>#}
+    <script>
+        $(document).ready(function () {
+            // CSRF code
+            {% include 'core/includes/ajax_setup.html' %}
+
+            $('.img_post').click(function (e) {
+                e.preventDefault();
+                let data = $(this).attr("data-pk");
+                let type = $(this).attr("data-type");
+
+                $.ajax({
+                    url: '{% url 'core:like' %}',
+                    method: 'POST',
+
+                    data: {
+                        'post_id': data,
+                        'post_type': type
+                    },
+                    success: function (d) {
+                        let new_like = d['likes'];
+                        let like_id = '#likes_count_' + data;
+                        let old = $(like_id).text();
+                        let img = jQuery(".img_post[data-pk='" + data + "'][data-type='" + type + "']");
+
+                        if (old > new_like) {
+                            $(img).attr('src', '{% static 'core/img/feed/like.png' %}');
+                        } else {
+                            $(img).attr('src', '{% static 'core/img/feed/liked.png' %}');
+
+                        }
+
+                        $(like_id).text(new_like);
+                    },
+                    error: function (d) {
+                    }
+                });
+            });
+
+            $('.post_comment').click(function (e) {
+                e.preventDefault();
+                let data = $(this).attr("data-pk");
+                let type = $(this).attr("data-type");
+                let comment_body = $('#add_comment_input_' + type + '_' + data).val();
+                if (comment_body !== '') {
+                    $('#add_comment_input_' + type + '_' + data).val('');
+                    $.ajax({
+                        url: '{% url 'core:comment' %}',
+                        method: 'POST',
+
+                        data: {
+                            'post_comment_body': comment_body,
+                            'post_id': data,
+                            'post_type': type
+                        },
+                        success: function (d) {
+                            let message = d['message'];
+                            let place_to_post = jQuery(".new_user_comments[data-pk='" + data + "'][data-type='" + type + "']");
+                            if (message === 'OK') {
+                                place_to_post.append('<p class="mx-4 text-dark my-1">' +
+                                    '<span class="font-weight-bold">{{ request.user }}:</span> ' +
+                                    comment_body + '</p>');
+                            }
+                        },
+                        error: function (d) {
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+
+{% endblock %}

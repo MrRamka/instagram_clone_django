@@ -1,0 +1,12 @@
+{% for comment in feed_comments %}
+    {% if comment.post == post %}
+        {% for cmnt in comment.comment_list %}
+            <p class="mx-4 text-dark my-1">
+                <span class="font-weight-bold">{{ cmnt.user }}:</span>
+                {{ cmnt.comment_body }} </p>
+        {% endfor %}
+        {% if comment.has_more %}
+            <a href="" class="mx-4 text-dark">Show more comments...</a>
+        {% endif %}
+    {% endif %}
+{% endfor %}

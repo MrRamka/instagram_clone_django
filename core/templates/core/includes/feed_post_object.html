@@ -1,0 +1,13 @@
+{% if post.image_obj %}
+    <div class="my-2">
+        <a href="">
+            <img class="image_profile img-thumbnail" src="{{ post.image_obj.url }}" alt="">
+        </a>
+    </div>
+{% else %}
+    <div class="p-2 embed-responsive embed-responsive-16by9 ">
+        <video controls class=" px-1 py-2">
+            <source src="{{ post.video_obj.url }}">
+        </video>
+    </div>
+{% endif %}

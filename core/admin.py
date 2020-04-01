@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from core.models import (HashTag, Place, Image, Video,
-                         ImageComment, VideoComment, ImageLike, VideoLike)
+                         ImageComment, VideoComment)
 
 
 class HashTagInline(admin.TabularInline):

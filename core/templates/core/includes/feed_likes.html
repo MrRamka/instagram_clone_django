@@ -1,0 +1,22 @@
+{% load static %}
+{% if request.user in post.likes.all %}
+    {% if post.image_obj %}
+        <img class="img_post" data-pk="{{ post.id }}" data-type="Image"
+             src="{% static  'core/img/feed/liked.png' %}"
+             alt="">
+    {% else %}
+        <img class="img_post" data-pk="{{ post.id }}" data-type="Video"
+             src="{% static  'core/img/feed/liked.png' %}"
+             alt="">
+    {% endif %}
+{% else %}
+    {% if post.image_obj %}
+        <img class="img_post" data-pk="{{ post.id }}" data-type="Image"
+             src="{% static  'core/img/feed/like.png' %}"
+             alt="">
+    {% else %}
+        <img class="img_post" data-pk="{{ post.id }}" data-type="Video"
+             src="{% static  'core/img/feed/like.png' %}"
+             alt="">
+    {% endif %}
+{% endif %}

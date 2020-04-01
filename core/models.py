@@ -83,28 +83,28 @@ class VideoComment(Comment):
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
 
 
-class Like(models.Model):
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-
-    class Meta:
-        abstract = True
-
-
-class ImageLike(Like):
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.user} to {self.image.user} image: {self.image.image_obj}'
-
-    class Meta:
-        unique_together = (('user', 'image'),)
-
-
-class VideoLike(Like):
-    video = models.ForeignKey(Video, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.user} to {self.video.user} video: {self.video.video_obj}'
-
-    class Meta:
-        unique_together = (('user', 'video'),)
+# class Like(models.Model):
+#     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+#
+#     class Meta:
+#         abstract = True
+#
+#
+# class ImageLike(Like):
+#     image = models.ForeignKey(Image, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return f'{self.user} to {self.image.user} image: {self.image.image_obj}'
+#
+#     class Meta:
+#         unique_together = (('user', 'image'),)
+#
+#
+# class VideoLike(Like):
+#     video = models.ForeignKey(Video, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return f'{self.user} to {self.video.user} video: {self.video.video_obj}'
+#
+#     class Meta:
+#         unique_together = (('user', 'video'),)

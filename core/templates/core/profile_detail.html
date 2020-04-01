@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    {% if profile == request.user %}
+        <h1>Hi, {{ profile.username }}</h1>
+    {% else %}
+        <h1>{{ profile.username }}</h1>
+    {% endif %}
+    <h3 class="font-weight-light">{{ profile.first_name }} {{ profile.last_name }}</h3>
+    <h3 class="font-weight-light">Bio: {{ profile.bio }}</h3>
+
+    <h3>Your images:</h3>
+    <div class="content_wrapper">
+        {% for user_image in user_images %}
+            <div class="content_block">
+                <a href="">
+                    <img class="image_profile img-thumbnail" src="{{ user_image.image_obj.url }}" alt="">
+                </a>
+                <p>Likes: {{ user_image.likes.count }}</p>
+
+            </div>
+        {% endfor %}
+    </div>
+
+    <h3>Your videos:</h3>
+    <div class="content_wrapper">
+        {% for user_video in user_videos %}
+            <div class="content_block">
+                {#                <video controls>#}
+                {#                    <source src="{{ user_video.video_obj.url }}">#}
+                {#                </video>#}
+
+                <div class="img-thumbnail embed-responsive embed-responsive-16by9">
+                    <video controls>
+                        <source src="{{ user_video.video_obj.url }}">
+                    </video>
+                </div>
+                <p>Likes: {{ user_video.likes.count }}</p>
+                <p>Views: {{ user_video.views }}</p>
+
+            </div>
+        {% endfor %}
+
+
+    </div>
+
+{% endblock %}
