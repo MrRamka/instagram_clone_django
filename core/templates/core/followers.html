@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <a href="{% url 'core:to_profile' profile.username %}" class="text-dark">
+                <h2>{{ profile.username }}</h2>
+            </a>
+            <h3 class="font-weight-light">{{ profile.first_name }} {{ profile.last_name }}</h3>
+            <h3 class="font-weight-light">Followers: </h3>
+            <br>
+            {% for profile_follower in profile_followers %}
+                <div class="shadow rounded mb-4 p-3 row col">
+                    <div class="col">
+                        <a href="{% url 'core:to_profile' profile_follower.username %}" class="text-dark">
+
+                            <h2>{{ profile_follower.username }}</h2>
+                        </a>
+                        <h3 class="font-weight-light">{{ profile_follower.first_name }} {{ profile_follower.last_name }}</h3>
+                    </div>
+
+                    <div class="col-3 text-center">
+                        {% if profile == request.user %}
+                            {% if profile_follower not in user.follows.all %}
+                                <button class="follow btn btn-outline-success"
+                                        data-username="{{ profile_follower.username }}">
+                                    Follow
+                                </button>
+                            {% else %}
+                                <button class="follow btn btn-outline-danger"
+                                        data-username="{{ profile_follower.username }}">
+                                    Unfollow
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            // CSRF code
+            {% include 'core/includes/ajax_setup.html' %}
+
+            function change_button_to_unfollow(username) {
+                let follow_btn = jQuery(".follow[data-username='" + username + "']");
+                {# color  #}
+                follow_btn.removeClass('btn-outline-success').addClass('btn-outline-danger');
+                {# value #}
+                follow_btn.text('Unfollow')
+            }
+
+            function change_button_to_follow(username) {
+                let follow_btn = jQuery(".follow[data-username='" + username + "']");
+                {# color  #}
+                follow_btn.removeClass('btn-outline-danger').addClass('btn-outline-success');
+                {# value #}
+                follow_btn.text('Follow')
+            }
+
+            $('.follow').click(function (e) {
+                e.preventDefault();
+                let data = $(this).attr("data-username");
+
+                $.ajax({
+                    url: '{% url 'core:follow' %}',
+                    method: 'POST',
+
+                    data: {
+                        'username': data
+                    },
+                    success: function (d) {
+                        let message = d['status'];
+                        if (message === 'Removed') {
+                            change_button_to_follow(data);
+                        } else if (message === 'Added') {
+                            change_button_to_unfollow(data)
+                        }
+                    },
+                    error: function (d) {
+                    }
+                });
+            });
+
+
+        });
+    </script>
+{% endblock %}

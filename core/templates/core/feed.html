@@ -40,7 +40,8 @@
             {#  Description  #}
             {% if post.description %}
                 <p class="mx-4 text-dark">
-                    <span class="font-weight-bold">{{ post.user }}:</span>
+                    <a href="{% url 'core:to_profile' post.user.username %}"><span
+                            class="font-weight-bold">{{ post.user }}:</span></a>
                     {{ post.description }} </p>
             {% endif %}
 

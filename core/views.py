@@ -59,7 +59,9 @@ class ProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-
+        # followers amount
+        followers_amount = Profile.objects.filter(follows=self.object).count()
+        ctx['followers_amount'] = followers_amount
         # get images
         images = Image.objects.filter(user__username=self.object.username)
         ctx['user_images'] = images
@@ -120,3 +122,43 @@ class FeedView(LoginRequiredMixin, ListView):
         all_comments = image_comment + video_comment
         ctx['feed_comments'] = all_comments
         return ctx
+
+
+class FollowersView(ListView):
+    model = Profile
+    template_name = 'core/followers.html'
+
+    def get_object(self):
+        return get_object_or_404(Profile, username=self.kwargs['username'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        # get user
+        user = self.get_object()
+        ctx['profile'] = user
+        # get followers
+        followers = Profile.objects.filter(follows=user)
+        ctx['profile_followers'] = followers
+        return ctx
+
+
+class FollowView(LoginRequiredMixin, View):
+    def post(self, request):
+        status = 'OK'
+        if request.is_ajax():
+            username = request.POST.get('username', None)
+            # session user
+            curr_user = request.user
+            # target user
+            target_user = Profile.objects.get(username=username)
+            # add to follow
+            if target_user in curr_user.follows.all():
+                curr_user.follows.remove(target_user)
+                status = 'Removed'
+            else:
+                curr_user.follows.add(target_user)
+                status = 'Added'
+        else:
+            status = 'BAD'
+        data = {'status': status}
+        return HttpResponse(json.dumps(data), content_type='application/json')
