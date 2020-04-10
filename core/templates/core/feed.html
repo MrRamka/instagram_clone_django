@@ -19,7 +19,7 @@
 
 
             {# Comment image #}
-            <a href="">
+            <a href="{% url 'core:to_image' post.pk %}">
                 <img class="img_post_comment mx-2" src="{% static 'core/img/feed/comment.png' %}" alt="">
             </a>
 

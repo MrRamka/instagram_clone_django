@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.urls import path
 
-from core.views import ProfileDetailView, FeedView, LikeView, CommentView, FollowersView, FollowView
+from core.views import ProfileDetailView, FeedView, LikeView, CommentView, FollowersView, FollowView, ImageDetailView
 
 app_name = 'core'
 urlpatterns = [
@@ -13,6 +13,7 @@ urlpatterns = [
     path('like/', LikeView.as_view(), name='like'),
     path('follow/', FollowView.as_view(), name='follow'),
     path('comment/', CommentView.as_view(), name='comment'),
+    path('image/<int:pk>', ImageDetailView.as_view(), name='to_image'),
 
 ]
 if settings.DEBUG:

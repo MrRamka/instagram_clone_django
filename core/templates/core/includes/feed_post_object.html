@@ -1,6 +1,6 @@
 {% if post.image_obj %}
     <div class="my-2">
-        <a href="">
+        <a href="{% url 'core:to_image' post.pk %}">
             <img class="image_profile img-thumbnail" src="{{ post.image_obj.url }}" alt="">
         </a>
     </div>

@@ -17,7 +17,7 @@
     <div class="content_wrapper">
         {% for user_image in user_images %}
             <div class="content_block">
-                <a href="">
+                <a href="{% url 'core:to_image' user_image.pk %}">
                     <img class="image_profile img-thumbnail" src="{{ user_image.image_obj.url }}" alt="">
                 </a>
                 <p>Likes: {{ user_image.likes.count }}</p>

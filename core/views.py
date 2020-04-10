@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 from operator import or_, attrgetter
 
 from core.comment_feed import FeedComment
@@ -54,7 +54,7 @@ class ProfileDetailView(DetailView):
     model = Profile
     template_name = 'core/profile_detail.html'
 
-    def get_object(self):
+    def get_object(self, **kwargs):
         return get_object_or_404(Profile, username=self.kwargs['username'])
 
     def get_context_data(self, **kwargs):
@@ -71,8 +71,8 @@ class ProfileDetailView(DetailView):
         return ctx
 
 
-class FeedView(LoginRequiredMixin, ListView):
-    model = Image
+class FeedView(LoginRequiredMixin, TemplateView):
+    # model = Image
     template_name = 'core/feed.html'
 
     def get_comments(self, list_obj, obj_type, comments_amount=2):
@@ -127,22 +127,37 @@ class FeedView(LoginRequiredMixin, ListView):
 class FollowersView(ListView):
     model = Profile
     template_name = 'core/followers.html'
+    # simple pagination
+    paginate_by = 5
 
     def get_object(self):
+        """
+        Get Profile object
+        :return: Profile object
+        """
         return get_object_or_404(Profile, username=self.kwargs['username'])
+
+    def get_queryset(self):
+        """
+        Update queryset to show profile followers.
+        :return followers queryset
+        """
+        queryset = Profile.objects.filter(follows=self.get_object())
+        return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        # get user
+        # put to context profile object
         user = self.get_object()
         ctx['profile'] = user
-        # get followers
-        followers = Profile.objects.filter(follows=user)
-        ctx['profile_followers'] = followers
         return ctx
 
 
 class FollowView(LoginRequiredMixin, View):
+    """
+    Method to handle follow ajax request
+    """
+
     def post(self, request):
         status = 'OK'
         if request.is_ajax():
@@ -162,3 +177,21 @@ class FollowView(LoginRequiredMixin, View):
             status = 'BAD'
         data = {'status': status}
         return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+class ImageDetailView(DetailView):
+    model = Image
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        # Add comments
+        comment_amount = 10
+        post_comments = ImageComment.objects.filter(image=self.object).order_by('-posted_on')[:comment_amount]
+        ctx['post_comments'] = post_comments
+
+        # add users subs
+        subs_amount = Profile.objects.filter(follows=self.object.user).count()
+        ctx['subs_amount'] = subs_amount
+
+        return ctx

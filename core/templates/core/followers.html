@@ -9,7 +9,8 @@
             <h3 class="font-weight-light">{{ profile.first_name }} {{ profile.last_name }}</h3>
             <h3 class="font-weight-light">Followers: </h3>
             <br>
-            {% for profile_follower in profile_followers %}
+
+            {% for profile_follower in profile_list %}
                 <div class="shadow rounded mb-4 p-3 row col">
                     <div class="col">
                         <a href="{% url 'core:to_profile' profile_follower.username %}" class="text-dark">
@@ -37,6 +38,20 @@
                 </div>
             {% endfor %}
 
+
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    {% endif %}
+    </span>
+            </div>
 
         </div>
     </div>
