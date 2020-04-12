@@ -6,7 +6,7 @@
     </div>
 {% else %}
     <div class="p-2 embed-responsive embed-responsive-16by9 ">
-        <video controls class=" px-1 py-2">
+        <video controls class="px-1 py-2 video" data-pk='{{ post.pk }}'>
             <source src="{{ post.video_obj.url }}">
         </video>
     </div>

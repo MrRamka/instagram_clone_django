@@ -4,7 +4,7 @@ from itertools import chain
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
@@ -72,7 +72,6 @@ class ProfileDetailView(DetailView):
 
 
 class FeedView(LoginRequiredMixin, TemplateView):
-    # model = Image
     template_name = 'core/feed.html'
 
     def get_comments(self, list_obj, obj_type, comments_amount=2):
@@ -195,3 +194,41 @@ class ImageDetailView(DetailView):
         ctx['subs_amount'] = subs_amount
 
         return ctx
+
+
+class VideoDetailView(DetailView):
+    model = Video
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        # Add comments
+        comment_amount = 10
+        post_comments = VideoComment.objects.filter(video=self.object).order_by('-posted_on')[:comment_amount]
+        ctx['post_comments'] = post_comments
+
+        # add users subs
+        subs_amount = Profile.objects.filter(follows=self.object.user).count()
+        ctx['subs_amount'] = subs_amount
+
+        return ctx
+
+
+class AddViewsToVideo(View):
+    """
+        Method to handle video views ajax request
+    """
+
+    def post(self, request):
+        if request.is_ajax():
+            video_pk = request.POST.get('video_pk', None)
+
+            video = Video.objects.get(id=video_pk)
+            # Using F
+            video.views = F('views') + 1
+            video.save()
+
+            all_views = Video.objects.get(id=video_pk).views
+            # add to follow
+            data = {'views': all_views}
+            return HttpResponse(json.dumps(data), content_type='application/json')

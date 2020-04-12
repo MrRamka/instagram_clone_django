@@ -19,9 +19,15 @@
 
 
             {# Comment image #}
-            <a href="{% url 'core:to_image' post.pk %}">
-                <img class="img_post_comment mx-2" src="{% static 'core/img/feed/comment.png' %}" alt="">
-            </a>
+            {% if post.image_obj %}
+                <a href="{% url 'core:to_image' post.pk %}">
+                    <img class="img_post_comment mx-2" src="{% static 'core/img/feed/comment.png' %}" alt="">
+                </a>
+            {% else %}
+                <a href="{% url 'core:to_video' post.pk %}">
+                    <img class="img_post_comment mx-2" src="{% static 'core/img/feed/comment.png' %}" alt="">
+                </a>
+            {% endif %}
 
             {# Amount likes #}
             <p class="mx-2 likes my-1">Likes: <span
@@ -134,6 +140,36 @@
                     });
                 }
             });
+
+            $('.video').click(function (e) {
+                    e.preventDefault();
+
+                    let data = $(this).attr("data-pk");
+                    let vid = $(".video[data-pk='" + data + "']").get(0);
+                    if (vid.paused) {
+                        vid.play();
+                        $.ajax({
+                            url: '{% url 'core:add_view' %}',
+                            method: 'POST',
+
+                            data: {
+                                'video_pk': data
+                            },
+                            success: function (d) {
+                                let new_views = d['views'];
+                                let views_count = $('#views_count_' + data);
+
+                                $(views_count).text(new_views);
+                            },
+                            error: function (d) {
+                            }
+                        });
+                    } else {
+                        vid.pause();
+                    }
+                }
+            );
+
 
         });
     </script>

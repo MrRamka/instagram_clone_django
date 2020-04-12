@@ -35,8 +35,11 @@
                         <source src="{{ user_video.video_obj.url }}">
                     </video>
                 </div>
-                <p>Likes: {{ user_video.likes.count }}</p>
-                <p>Views: {{ user_video.views }}</p>
+                <a href="{% url 'core:to_video' user_video.pk %}">
+                    Go to post
+                </a>
+                <p class="m-1">Likes: {{ user_video.likes.count }}</p>
+                <p class="m-1">Views: {{ user_video.views }}</p>
 
             </div>
         {% endfor %}

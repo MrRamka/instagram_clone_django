@@ -1,0 +1,226 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="row">
+        <div class="feed_image_wrapper border p-2 m-4 shadow rounded my-5 col">
+
+            {# Video #}
+            <div class="p-2 embed-responsive embed-responsive-16by9 ">
+                <video controls class=" px-1 py-2 video" data-pk='{{ object.pk }}'>
+                    <source src="{{ object.video_obj.url }}">
+                </video>
+            </div>
+
+
+            {#  Description  #}
+            <div>
+
+                {% if object.description %}
+                    <h5 class="mx-3">Description</h5>
+                    <p class="mx-4 text-dark">
+                        <a href="{% url 'core:to_profile' object.user.username %}"><span
+                                class="font-weight-bold">{{ object.user }}:</span></a>
+                        {{ object.description }} </p>
+                    <hr/>
+                {% endif %}
+            </div>
+            <div>
+                {# TODO: search by hashtag #}
+                {% if object.hashtag %}
+                    <h5 class="mx-3">Hashtag</h5>
+                    <a href="" class="my-1"><p class="mx-4 text-dark my-1">{{ object.hashtag }}</p></a>
+                    <hr/>
+                {% endif %}
+            </div>
+            <div>
+                {# TODO: search by place #}
+                {% if object.place %}
+                    <h5 class="mx-3">Place</h5>
+                    <a href="" class="my-1"><p class="mx-4 text-dark my-1">{{ object.place.place_name }}</p></a>
+                    <hr/>
+                {% endif %}
+            </div>
+        </div>
+        <div class="border p-2 m-4 shadow rounded my-5 col-4 d-flex flex-column">
+            {# Post author #}
+            <div>
+                <h4 class="mx-2">Author</h4>
+                <p class="mx-4">
+                    <a class="text-dark" href="{{ object.user.get_absolute_url }}">
+                        {{ object.user }}</a>
+                    <a href="{% url 'core:to_profile_followers' object.user.username %}">{{ subs_amount }} subs</a>
+                </p>
+                <hr/>
+            </div>
+            {#  Comments  #}
+            <div>
+                <h4 class="mx-2">Comments</h4>
+                {% for comment in post_comments %}
+                    <p class="mx-4 text-dark my-2">
+                        <a href="{% url 'core:to_profile' comment.user.username %}"><span
+                                class="font-weight-bold">{{ comment.user }}:</span></a>
+                        {{ comment.comment_body }} ({{ comment.posted_on|timesince }} ago)</p>
+                {% endfor %}
+                {# Go to full comment page #}
+                {% if post_comments %}
+                    <a href="" class="mx-4">Show all comments...</a>
+                    <hr/>
+                {% endif %}
+            </div>
+
+            <div class="new_user_comments" data-pk="{{ object.id }}" data-type="Video">
+            </div>
+
+            {# align to the bottom of block #}
+            <div class="mt-auto">
+                <hr/>
+                {# Likes #}
+                {% if request.user in object.likes.all %}
+                    <img class="img_post" data-pk="{{ object.id }}" data-type="Video"
+                         src="{% static  'core/img/feed/liked.png' %}"
+                         alt="">
+                {% else %}
+                    <img class="img_post" data-pk="{{ object.id }}" data-type="Video"
+                         src="{% static  'core/img/feed/like.png' %}"
+                         alt="">
+                {% endif %}
+
+                {# Comment video #}
+                <a href="{% url 'core:to_video' object.pk %}">
+                    <img class="img_post_comment mx-2" src="{% static 'core/img/feed/comment.png' %}" alt="">
+                </a>
+
+                {# Amount likes #}
+                <p class="mx-2 likes my-1">Likes: <span
+                        id="likes_count_{{ object.id }}">{{ object.likes.all.count }}</span></p>
+
+                <p class="mx-2 my-1">Views: <span
+                        id="views_count_{{ object.id }}">{{ object.views }}</span></p>
+
+                {# Posted on #}
+                <p class="font-weight-light mx-2 text-uppercase feed_time_text">{{ object.posted_on|timesince }}
+                    ago</p>
+
+
+                {#  Add comment form  #}
+                <form class="my-2">
+                    <div class="row">
+                        <div class="col">
+                            <input id="add_comment_input_Video_{{ object.id }}" name="add_comment_input" type="text"
+                                   class="form-control feed_comment_block"
+                                   placeholder="Add a comment">
+                        </div>
+                        <div class="col-3">
+                            <button class="btn post_comment" data-pk="{{ object.id }}" data-type="Video">Post</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+    {#    <script src="{% static 'core/js/like-ajax.js' %}"></script>#}
+    <script>
+        $(document).ready(function () {
+            // CSRF code
+            {% include 'core/includes/ajax_setup.html' %}
+
+            $('.img_post').click(function (e) {
+                e.preventDefault();
+                let data = $(this).attr("data-pk");
+                let type = $(this).attr("data-type");
+
+                $.ajax({
+                    url: '{% url 'core:like' %}',
+                    method: 'POST',
+
+                    data: {
+                        'post_id': data,
+                        'post_type': type
+                    },
+                    success: function (d) {
+                        let new_like = d['likes'];
+                        let like_id = '#likes_count_' + data;
+                        let old = $(like_id).text();
+                        let img = jQuery(".img_post[data-pk='" + data + "'][data-type='" + type + "']");
+
+                        if (old > new_like) {
+                            $(img).attr('src', '{% static 'core/img/feed/like.png' %}');
+                        } else {
+                            $(img).attr('src', '{% static 'core/img/feed/liked.png' %}');
+
+                        }
+
+                        $(like_id).text(new_like);
+                    },
+                    error: function (d) {
+                    }
+                });
+            });
+
+            $('.post_comment').click(function (e) {
+                e.preventDefault();
+                let data = $(this).attr("data-pk");
+                let type = $(this).attr("data-type");
+                let comment_body = $('#add_comment_input_' + type + '_' + data).val();
+                if (comment_body !== '') {
+                    $('#add_comment_input_' + type + '_' + data).val('');
+                    $.ajax({
+                        url: '{% url 'core:comment' %}',
+                        method: 'POST',
+
+                        data: {
+                            'post_comment_body': comment_body,
+                            'post_id': data,
+                            'post_type': type
+                        },
+                        success: function (d) {
+                            let message = d['message'];
+                            let place_to_post = jQuery(".new_user_comments[data-pk='" + data + "'][data-type='" + type + "']");
+                            if (message === 'OK') {
+                                place_to_post.append('<p class="mx-4 text-dark my-1">' +
+                                    '<span class="font-weight-bold">{{ request.user }}:</span> ' +
+                                    comment_body + '</p>');
+                            }
+                        },
+                        error: function (d) {
+                        }
+                    });
+                }
+            });
+
+            $('.video').click(function (e) {
+                    e.preventDefault();
+
+                    let data = $(this).attr("data-pk");
+                    let vid = $(".video[data-pk='" + data + "']").get(0);
+                    if (vid.paused) {
+                        vid.play();
+                        $.ajax({
+                            url: '{% url 'core:add_view' %}',
+                            method: 'POST',
+
+                            data: {
+                                'video_pk': data
+                            },
+                            success: function (d) {
+                                let new_views = d['views'];
+                                let views_count = $('#views_count_' + data);
+
+                                $(views_count).text(new_views);
+                            },
+                            error: function (d) {
+                            }
+                        });
+                    } else {
+                        vid.pause();
+                    }
+                }
+            );
+        });
+    </script>
+
+{% endblock %}

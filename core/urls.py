@@ -3,7 +3,8 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.urls import path
 
-from core.views import ProfileDetailView, FeedView, LikeView, CommentView, FollowersView, FollowView, ImageDetailView
+from core.views import ProfileDetailView, FeedView, LikeView, CommentView, FollowersView, FollowView, ImageDetailView, \
+    VideoDetailView, AddViewsToVideo
 
 app_name = 'core'
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('follow/', FollowView.as_view(), name='follow'),
     path('comment/', CommentView.as_view(), name='comment'),
     path('image/<int:pk>', ImageDetailView.as_view(), name='to_image'),
+    path('video/<int:pk>', VideoDetailView.as_view(), name='to_video'),
+    path('add_view/', AddViewsToVideo.as_view(), name='add_view'),
 
 ]
 if settings.DEBUG:
