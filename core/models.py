@@ -10,7 +10,7 @@ class HashTag(models.Model):
     hashtag = models.CharField(max_length=50, validators=[hashtag_validator], unique=True)
 
     def __str__(self):
-        return f'#{self.hashtag}'
+        return f'{self.hashtag}'
 
 
 class Place(models.Model):

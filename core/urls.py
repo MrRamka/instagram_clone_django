@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from core.views import ProfileDetailView, FeedView, LikeView, CommentView, FollowersView, FollowView, ImageDetailView, \
-    VideoDetailView, AddViewsToVideo
+    VideoDetailView, AddViewsToVideo, HashTagPostListView, PlacePostListView
 
 app_name = 'core'
 urlpatterns = [
@@ -17,7 +17,8 @@ urlpatterns = [
     path('image/<int:pk>', ImageDetailView.as_view(), name='to_image'),
     path('video/<int:pk>', VideoDetailView.as_view(), name='to_video'),
     path('add_view/', AddViewsToVideo.as_view(), name='add_view'),
-
+    path('hashtag/<hashtag>', HashTagPostListView.as_view(), name='hashtag'),
+    path('place/<place_slug>', PlacePostListView.as_view(), name='place'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

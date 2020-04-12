@@ -232,3 +232,49 @@ class AddViewsToVideo(View):
             # add to follow
             data = {'views': all_views}
             return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+class HashTagPostListView(FeedView):
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        hashtag = self.kwargs['hashtag']
+        # get follows images limit 50
+        feed_post_amount = 25
+        images = Image.objects.prefetch_related('likes').filter(
+            hashtag__hashtag=hashtag).order_by('-posted_on')[:feed_post_amount]
+        # get follows videos
+        videos = Video.objects.prefetch_related('likes').filter(hashtag__hashtag=hashtag).order_by('-posted_on')[
+                 :feed_post_amount]
+
+        all_posts = sorted(chain(images, videos), key=attrgetter('posted_on'), reverse=True)
+        ctx['posts'] = all_posts
+        # get comments
+        image_comment = self.get_comments(list_obj=images, obj_type=Image)
+        video_comment = self.get_comments(list_obj=videos, obj_type=Video)
+        all_comments = image_comment + video_comment
+        ctx['feed_comments'] = all_comments
+        return ctx
+
+
+class PlacePostListView(FeedView):
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        place_slug = self.kwargs['place_slug']
+        # get follows images limit 50
+        feed_post_amount = 25
+        images = Image.objects.prefetch_related('likes').filter(
+            place__place_slug=place_slug).order_by('-posted_on')[:feed_post_amount]
+        # get follows videos
+        videos = Video.objects.prefetch_related('likes').filter(
+            place__place_slug=place_slug).order_by('-posted_on')[:feed_post_amount]
+
+        all_posts = sorted(chain(images, videos), key=attrgetter('posted_on'), reverse=True)
+        ctx['posts'] = all_posts
+        # get comments
+        image_comment = self.get_comments(list_obj=images, obj_type=Image)
+        video_comment = self.get_comments(list_obj=videos, obj_type=Video)
+        all_comments = image_comment + video_comment
+        ctx['feed_comments'] = all_comments
+        return ctx

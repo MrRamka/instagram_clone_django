@@ -26,18 +26,18 @@
                 {% endif %}
             </div>
             <div>
-                {# TODO: search by hashtag #}
                 {% if object.hashtag %}
                     <h5 class="mx-3">Hashtag</h5>
-                    <a href="" class="my-1"><p class="mx-4 text-dark my-1">{{ object.hashtag }}</p></a>
+                    <a href="{% url 'core:hashtag' hashtag=object.hashtag %}" class="my-1"><p
+                            class="mx-4 text-dark my-1">#{{ object.hashtag }}</p></a>
                     <hr/>
                 {% endif %}
             </div>
             <div>
-                {# TODO: search by place #}
                 {% if object.place %}
                     <h5 class="mx-3">Place</h5>
-                    <a href="" class="my-1"><p class="mx-4 text-dark my-1">{{ object.place.place_name }}</p></a>
+                    <a href="{% url 'core:place' object.place.place_slug %}" class="my-1"><p
+                            class="mx-4 text-dark my-1">{{ object.place.place_name }}</p></a>
                     <hr/>
                 {% endif %}
             </div>

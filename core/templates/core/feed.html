@@ -45,10 +45,28 @@
 
             {#  Description  #}
             {% if post.description %}
+                <h6 class="mx-3">Description</h6>
                 <p class="mx-4 text-dark">
                     <a href="{% url 'core:to_profile' post.user.username %}"><span
                             class="font-weight-bold">{{ post.user }}:</span></a>
                     {{ post.description }} </p>
+                <hr/>
+            {% endif %}
+
+            {#  post hashtag  #}
+            {% if post.hashtag %}
+                <h6 class="mx-3">Hashtag</h6>
+                <a href="{% url 'core:hashtag' hashtag=post.hashtag %}" class="my-1"><p
+                        class="mx-4 text-dark my-1">#{{ post.hashtag }}</p></a>
+                <hr/>
+            {% endif %}
+
+            {# post place  #}
+            {% if post.place %}
+                <h6 class="mx-3">Place</h6>
+                <a href="{% url 'core:place' place_slug=post.place.place_slug %}" class="my-1"><p
+                        class="mx-4 text-dark my-1">{{ post.place.place_name }}</p></a>
+                <hr/>
             {% endif %}
 
             {#  Comments  #}
