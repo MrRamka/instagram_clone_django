@@ -5,14 +5,16 @@ from itertools import chain
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, F
-from django.http import HttpResponse
+from django.http import HttpResponse, request, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView, CreateView, FormView
 from operator import or_, attrgetter
 
 from core.comment_feed import FeedComment
-from core.models import Image, Video, InstagramObject, ImageComment, VideoComment
+from core.forms import ImageUploadForm
+from core.models import Image, Video, InstagramObject, ImageComment, VideoComment, HashTag
 from user_profile.models import Profile
 
 
@@ -278,3 +280,42 @@ class PlacePostListView(FeedView):
         all_comments = image_comment + video_comment
         ctx['feed_comments'] = all_comments
         return ctx
+
+
+class ImageCommentsView(ListView):
+    model = ImageComment
+    paginate_by = 5
+    template_name = 'core/image_comments.html'
+
+    def get_object(self):
+        return get_object_or_404(Image, id=self.kwargs['pk'])
+
+    def get_queryset(self):
+        queryset = ImageComment.objects.filter(image=self.get_object())
+        return queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx['author'] = self.get_object().user
+
+        ctx['image'] = self.get_object()
+        return ctx
+
+
+class AddImageView(CreateView, LoginRequiredMixin):
+    template_name = 'core/image_create.html'
+    form_class = ImageUploadForm
+    success_url = reverse_lazy('core:add_image')
+
+    def form_valid(self, form):
+        image = Image()
+        image.user = self.request.user
+        image.image_obj = self.request.FILES.get('image_obj')
+        if form.fields['description']:
+            image.description = form.fields['description']
+        # if form.fields['hashtag']:
+        #     hashtag = HashTag
+        image.save()
+        # Todo: add hashtag
+        return HttpResponseRedirect(self.success_url)

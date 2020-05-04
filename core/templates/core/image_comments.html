@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <a href="{% url 'core:to_profile' author.username %}" class="text-dark">
+                <h2>{{ author.username }}</h2>
+            </a>
+            <h3 class="font-weight-light">{{ author.first_name }} {{ author.last_name }}</h3>
+            <a href="{% url 'core:to_image' image.pk %}">
+                <img class="image_profile img-thumbnail" src="{{ image.image_obj.url }}" alt="">
+            </a>
+            <hr/>
+            <h3>Comments</h3>
+            <br>
+            {% for imagecomment in imagecomment_list %}
+                <div class="shadow rounded mb-4 p-3">
+                    <a href="{% url 'core:to_profile' imagecomment.user.username %}" class="text-dark">
+                        <h2>{{ imagecomment.user.username }}</h2>
+                    </a>
+                    <p>{{ imagecomment.comment_body }}</p>
+                    <hr/>
+                    <p class="font-weight-light mx-2 text-uppercase feed_time_text">
+                        {{ imagecomment.posted_on|timesince }} ago</p>
+                </div>
+            {% endfor %}
+
+
+            <div class="pagination">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+    </script>
+{% endblock %}

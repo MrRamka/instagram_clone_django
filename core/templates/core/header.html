@@ -1,15 +1,16 @@
 <header>
     {#    {% block login %}#}
-            <div class="header_pos d-flex flex-column flex-md-row fixed-top align-items-center p-2 px-md-3 mb-2 bg-white border-bottom shadow-sm">
-                <a class="my-0 mr-md-auto navbar-brand text-dark" href="{% url 'core:feed' %}">Instagram</a>
-                <nav class="my-2 my-md-0 mr-md-3">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'core:to_profile' request.user %}" class="mr-2">My Profile ({{ user.username }})</a>
-                        <a href="">Log out</a>
-                    {% else %}
-                        <a href="" class="mr-2">Login</a>
-                        <a href="">Register</a>
-                    {% endif %}
-                </nav>
-            </div>
+    <div class="header_pos d-flex flex-column flex-md-row fixed-top align-items-center p-2 px-md-3 mb-2 bg-white border-bottom shadow-sm">
+        <a class="my-0 mr-md-auto navbar-brand text-dark" href="{% url 'core:feed' %}">Instagram</a>
+        <nav class="my-2 my-md-0 mr-md-3">
+            {% if user.is_authenticated %}
+                <a href="{% url 'core:add_image' %}" class="btn btn-outline-success mr-2">Add image</a>
+                <a href="{% url 'core:to_profile' request.user %}" class="mr-2">My Profile ({{ user.username }})</a>
+                <a href="">Log out</a>
+            {% else %}
+                <a href="" class="mr-2">Login</a>
+                <a href="">Register</a>
+            {% endif %}
+        </nav>
+    </div>
 </header>

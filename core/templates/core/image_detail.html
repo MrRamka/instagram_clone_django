@@ -64,7 +64,7 @@
                 {% endfor %}
                 {# Go to full comment page #}
                 {% if post_comments %}
-                    <a href="" class="mx-4">Show all comments...</a>
+                    <a href="{% url 'core:image_comments' object.pk %}" class="mx-4">Show all comments...</a>
                     <hr/>
                 {% endif %}
             </div>
