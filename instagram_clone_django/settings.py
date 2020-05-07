@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'core',
     'user_profile',
+    'message',
+    'channels',
     'crispy_forms',
 ]
 
@@ -125,3 +127,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 AUTH_USER_MODEL = 'user_profile.Profile'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Channels
+ASGI_APPLICATION = 'instagram_clone_django.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
