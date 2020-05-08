@@ -6,6 +6,9 @@
         <h1>Hi, {{ profile.username }}</h1>
     {% else %}
         <h1>{{ profile.username }}</h1>
+        <a href="{% url 'messages:write_to' profile.username %}"
+           class="btn btn-outline-success float-right">Write
+            message</a>
     {% endif %}
     <h3 class="font-weight-light">{{ profile.first_name }} {{ profile.last_name }}</h3>
     <h3 class="font-weight-light">Bio: {{ profile.bio }}</h3>

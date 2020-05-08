@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-8 offset-md-2">
             <a href="{% url 'core:to_profile' profile.username %}" class="text-dark">
                 <h2>{{ profile.username }}</h2>
             </a>
@@ -23,15 +23,21 @@
                     <div class="col-3 text-center">
                         {% if profile == request.user %}
                             {% if profile_follower not in user.follows.all %}
-                                <button class="follow btn btn-outline-success"
+                                <button class="follow btn btn-outline-success my-2"
                                         data-username="{{ profile_follower.username }}">
                                     Follow
                                 </button>
+                                <a href="{% url 'messages:write_to' profile_follower.username %}"
+                                   class="btn btn-outline-success float-right">Write
+                                    message</a>
                             {% else %}
-                                <button class="follow btn btn-outline-danger"
+                                <button class="follow btn btn-outline-danger my-2"
                                         data-username="{{ profile_follower.username }}">
                                     Unfollow
                                 </button>
+                                <a href="{% url 'messages:write_to' profile_follower.username %}"
+                                   class="btn btn-outline-success float-right">Write
+                                    message</a>
                             {% endif %}
                         {% endif %}
                     </div>

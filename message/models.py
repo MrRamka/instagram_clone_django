@@ -20,7 +20,7 @@ class ChatRoom(models.Model):
     members = models.ManyToManyField(Profile)
 
     def __str__(self):
-        return f'Type: {self.type} Members: {self.members}'
+        return f'Type: {self.type} Members: {self.members.count()}'
 
 
 class Message(models.Model):

@@ -1,14 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.urls import reverse
+from django.views.generic import TemplateView, ListView, RedirectView
 
 from message.models import ChatRoom, Message
-
-
-def room(request, room_name):
-    return render(request, 'message/room.html', {
-        'room_name': room_name
-    })
+from user_profile.models import Profile
 
 
 class ChatAccessMixin(AccessMixin):
@@ -35,3 +32,31 @@ class RoomView(TemplateView, ChatAccessMixin):
         chat = ChatRoom.objects.get(id=room_id)
         ctx['chat'] = chat
         return ctx
+
+
+class RoomListView(ListView, LoginRequiredMixin):
+    template_name = 'message/chat_list.html'
+    model = ChatRoom
+
+    def get_queryset(self):
+        queryset = ChatRoom.objects.filter(members__username=self.request.user.username)
+        return queryset
+
+
+class CreateChatRoom(TemplateView, LoginRequiredMixin):
+
+    def get(self, request, *args, **kwargs):
+        target_user = Profile.objects.get(username=kwargs['username'])
+
+        # Chats with current user and target user
+        chats = ChatRoom.objects.filter(members__username__in=[request.user]).filter(
+            members__username__in=[target_user]).filter(type=ChatRoom.DIALOG)
+
+        chat_d = chats.first()
+        if not chat_d:
+            chat_d = ChatRoom.objects.create()
+            chat_d.type = ChatRoom.DIALOG
+            chat_d.members.add(target_user, request.user)
+            chat_d.save()
+
+        return HttpResponseRedirect(reverse('messages:room', args=[chat_d.pk]))

@@ -23,6 +23,9 @@
         </div>
         <hr>
         <div style="height: 35em; overflow: auto;">
+            {% if messages.count == 0 %}
+                <p class="msg"></p>
+            {% endif %}
             {% for message in messages %}
                 <div class="row mx-3 msg">
                     <p class="m-2 border {% if message.author == request.user %}

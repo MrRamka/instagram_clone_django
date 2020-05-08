@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Chat List
+{% endblock %}
+
+{% block content %}
+    <div class="col-8 offset-2 shadow" style="height: 35em; overflow: auto;">
+        <h2 class="font-weight-light p-2">Chats
+            <a href="{% url 'core:to_profile_followers' request.user.username %}"
+               class="btn btn-outline-dark float-right">
+                Create</a>
+        </h2>
+        <hr/>
+        {% for chat in object_list %}
+            <div class="py-2">
+                {% if chat.type == chat.DIALOG %}
+                    <h3><span class="font-weight-light">Dialog: </span>
+                        {% for member in chat.members.all %}
+                            {% if member != request.user %}
+                                <a href="{% url 'core:to_profile'  member.username %}" class="text-dark">
+                                    {{ member.username }}
+                                </a>
+                                <a href="{% url 'messages:room' chat.id %}" class="btn btn-outline-success float-right">Write
+                                    message</a>
+                            {% endif %}
+                        {% endfor %}
+                    </h3>
+                {% else %}
+                    <h3><span class="font-weight-light">Chat: </span> <a href="">{{ chat.members.all.count }}
+                        members</a>
+                        <a href="{% url 'messages:room' chat.id %}" class="btn btn-outline-success float-right">Write
+                            message</a>
+                    </h3>
+
+
+                {% endif %}
+
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
