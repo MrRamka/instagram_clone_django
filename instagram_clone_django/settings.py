@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from datetime import timedelta
 
+from django.urls import reverse_lazy
+
 from instagram_clone_django import env_settings as env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -129,7 +131,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 AUTH_USER_MODEL = 'user_profile.Profile'
-
+LOGIN_REDIRECT_URL = reverse_lazy('core:feed')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Channels

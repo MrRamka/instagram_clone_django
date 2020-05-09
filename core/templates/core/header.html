@@ -7,10 +7,10 @@
                 <a href="{% url 'core:add_image' %}" class="btn btn-outline-success mr-2">Add image</a>
                 <a href="{% url 'messages:chats' %}" class="btn btn-outline-primary mr-2">Chat</a>
                 <a href="{% url 'core:to_profile' request.user %}" class="mr-2">My Profile ({{ user.username }})</a>
-                <a href="">Log out</a>
+                <a href="{% url 'user_profile:logout' %}">Log out</a>
             {% else %}
-                <a href="" class="mr-2">Login</a>
-                <a href="">Register</a>
+                <a href="{% url 'user_profile:login' %}" class="mr-2">Login</a>
+                <a href="{% url 'user_profile:registration' %}">Register</a>
             {% endif %}
         </nav>
     </div>
