@@ -6,9 +6,11 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-
+from django.conf.urls import handler404, handler500
 from django.contrib import admin
 from django.urls import path, include
+
+import core
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -34,4 +36,8 @@ urlpatterns = [
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
 ]
+
+handler404 = core.views.error_404
+handler500 = core.views.error_500

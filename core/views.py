@@ -319,3 +319,24 @@ class AddImageView(CreateView, LoginRequiredMixin):
         image.save()
         # Todo: add hashtag
         return HttpResponseRedirect(self.success_url)
+
+
+def error_404(request, exception):
+    """
+    Handling 404 errors
+    :param request:
+    :param exception:
+    :return:
+    """
+    data = {}
+    return render(request, 'core/error_404.html', data)
+
+
+def error_500(request):
+    """
+    Handling 500 errors
+    :param request:
+    :return:
+    """
+    data = {}
+    return render(request, 'core/error_500.html', data)
