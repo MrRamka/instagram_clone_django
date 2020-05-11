@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from core.models import (HashTag, Place, Image, Video,
-                         ImageComment, VideoComment)
+                         ImageComment, VideoComment, Statistics)
 
 
 class HashTagInline(admin.TabularInline):
@@ -105,43 +105,7 @@ class VideoCommentAdmin(admin.ModelAdmin):
 
     video_url.short_description = 'Video'
 
-# @admin.register(ImageLike)
-# class ImageLikeAdmin(admin.ModelAdmin):
-#     list_display = ['user', 'image_url']
-#     ordering = ['user']
-#     search_fields = ['user_username']
-#
-#     def image_url(self, obj):
-#         display_text = ", ".join([
-#             "<a href={}>{}</a>".format(
-#                 reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'image'),
-#                         args=(obj.image.id,)),
-#                 obj.image.image_obj)
-#
-#         ])
-#         if display_text:
-#             return mark_safe(display_text)
-#         return "-"
-#
-#     image_url.short_description = 'Image'
 
-
-# @admin.register(VideoLike)
-# class VideoLikeAdmin(admin.ModelAdmin):
-#     list_display = ['user', 'video_url']
-#     ordering = ['user']
-#     search_fields = ['user_username']
-#
-#     def video_url(self, obj):
-#         display_text = ", ".join([
-#             "<a href={}>{}</a>".format(
-#                 reverse('admin:{}_{}_change'.format(obj._meta.app_label, 'video'),
-#                         args=(obj.video.id,)),
-#                 obj.video.video_obj)
-#
-#         ])
-#         if display_text:
-#             return mark_safe(display_text)
-#         return "-"
-#
-#     video_url.short_description = 'Video'
+@admin.register(Statistics)
+class StatisticsAdmin(admin.ModelAdmin):
+    list_display = ['date', 'image_amount', 'video_amount', 'video_view_amount', 'like_amount', 'user_amount']
