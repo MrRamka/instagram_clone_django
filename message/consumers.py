@@ -8,22 +8,6 @@ from message.models import Message, ChatRoom
 from user_profile.models import Profile
 
 
-@database_sync_to_async
-def get_user(username):
-    return Profile.objects.get(username=username)
-
-
-@database_sync_to_async
-def create_message():
-    message_obj = Message.objects.create()
-    return message_obj
-
-
-@database_sync_to_async
-def save_message(message):
-    message.save()
-
-
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_id']

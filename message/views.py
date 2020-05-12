@@ -1,8 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import TemplateView, ListView, RedirectView
+from django.views.generic import TemplateView, ListView
 
 from message.models import ChatRoom, Message
 from user_profile.models import Profile

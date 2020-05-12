@@ -14,3 +14,8 @@ class Profile(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('core:to_profile', args=[self.username])
+
+
+class UserToken(models.Model):
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    token = models.CharField(max_length=150)

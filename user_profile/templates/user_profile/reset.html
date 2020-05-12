@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    Login page
+    Rest page
 {% endblock %}
 
 {% block content %}
@@ -10,11 +10,8 @@
         <form method="post">
 
             {% csrf_token %}
-            {{ form|crispy }}
-
-            <button class="btn btn-primary" type="submit">Login</button>
+            {% crispy form %}
 
         </form>
-        <a class="btn btn-outline-danger my-2" href="{% url 'user_profile:reset_request' %}">Forgot password</a>
     </div>
 {% endblock %}

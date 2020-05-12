@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import Count
 
 from core.models import Image, Video
-from user_profile.models import Profile
+from user_profile.models import Profile, UserToken
 
 
 # class FollowersFilter(admin.SimpleListFilter):
@@ -51,3 +51,6 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def videos_amount(self, profile):
         return Video.objects.filter(user=profile).count()
+
+
+admin.site.register(UserToken)

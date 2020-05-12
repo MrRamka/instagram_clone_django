@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from datetime import timedelta
-
+from os import environ as env
 from django.urls import reverse_lazy
 
-from instagram_clone_django import env_settings as env
+from instagram_clone_django import env_settings as envv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,10 +24,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.SECRET_KEY
+SECRET_KEY = envv.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.DEBUG
+DEBUG = envv.DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -164,3 +164,12 @@ BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_ALWAYS_EAGER = False
 
+EMAIL_USE_TLS = envv.EMAIL_USE_TLS
+EMAIL_HOST = envv.EMAIL_HOST
+EMAIL_PORT = envv.EMAIL_PORT
+EMAIL_HOST_USER = envv.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = envv.EMAIL_HOST_PASSWORD
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+LOGIN_URL = reverse_lazy('user_profile:login')
+LOGOUT_REDIRECT_URL = reverse_lazy('user_profile:login')

@@ -1,6 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from django.forms import ModelForm
+from django.forms import ModelForm, Form, EmailField, CharField, PasswordInput
 
 from user_profile.models import Profile
 
@@ -25,6 +25,26 @@ class LoginForm(ModelForm):
     class Meta:
         model = Profile
         fields = ['username', 'password']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Login'))
+        self.helper.form_method = 'post'
+
+
+class PasswordResetRequestForm(Form):
+    email = EmailField(label="Email", max_length=254)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Send email'))
+        self.helper.form_method = 'post'
+
+
+class PasswordResetForm(Form):
+    password = CharField(label="New Password", max_length=254, widget=PasswordInput())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
