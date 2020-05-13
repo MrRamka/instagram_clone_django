@@ -106,22 +106,23 @@ class FeedView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         # get follows
         follows = user.follows.all()
-        # get follows images limit 50
-        feed_post_amount = 25
-        images_buddies = Image.objects.prefetch_related('likes').filter(
-            reduce(or_, [Q(user_id=c.id) for c in follows])).order_by('-posted_on')[:feed_post_amount]
+        if len(follows) > 0:
+            # get follows images limit 50
+            feed_post_amount = 25
+            images_buddies = Image.objects.prefetch_related('likes').filter(
+                reduce(or_, [Q(user_id=c.id) for c in follows])).order_by('-posted_on')[:feed_post_amount]
 
-        # get follows videos
-        video_buddies = Video.objects.prefetch_related('likes').filter(
-            reduce(or_, [Q(user_id=c.id) for c in follows])).order_by('-posted_on')[:feed_post_amount]
+            # get follows videos
+            video_buddies = Video.objects.prefetch_related('likes').filter(
+                reduce(or_, [Q(user_id=c.id) for c in follows])).order_by('-posted_on')[:feed_post_amount]
 
-        all_posts = sorted(chain(images_buddies, video_buddies), key=attrgetter('posted_on'), reverse=True)
-        ctx['posts'] = all_posts
-        # get comments
-        image_comment = self.get_comments(list_obj=images_buddies, obj_type=Image)
-        video_comment = self.get_comments(list_obj=video_buddies, obj_type=Video)
-        all_comments = image_comment + video_comment
-        ctx['feed_comments'] = all_comments
+            all_posts = sorted(chain(images_buddies, video_buddies), key=attrgetter('posted_on'), reverse=True)
+            ctx['posts'] = all_posts
+            # get comments
+            image_comment = self.get_comments(list_obj=images_buddies, obj_type=Image)
+            video_comment = self.get_comments(list_obj=video_buddies, obj_type=Video)
+            all_comments = image_comment + video_comment
+            ctx['feed_comments'] = all_comments
         return ctx
 
 
