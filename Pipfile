@@ -78,6 +78,7 @@ Django = "==3.0.4"
 Faker = "==0.9.1"
 PyHamcrest = "==2.0.2"
 psycopg2-binary = "*"
+python-decouple = "*"
 
 [requires]
 python_version = "3.7"
